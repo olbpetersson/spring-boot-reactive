@@ -17,32 +17,26 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/lobbies")
 public class LobbyController {
-
-    private SimpMessagingTemplate messagingTemplate;
-
     @Autowired
     LobbyRepository repository;
 
     @Autowired
-    public LobbyController(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
-    }
+    private SimpMessagingTemplate messagingTemplate;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Lobby> getLobbies(){
+    public List<Lobby> getLobbies() {
         return repository.findAll();
     }
 
-    @RequestMapping(value="/{name}", method=RequestMethod.GET)
-    public void createLobby(@PathVariable String name){
-
+    @RequestMapping(value = "/{name}", method = RequestMethod.GET)
+    public void createLobby(@PathVariable String name) {
         repository.save(new Lobby(name));
         messagingTemplate.convertAndSend("/topic/lobbies", repository.findAll());
     }
 
-    @RequestMapping(value="/{id}/clear", method=RequestMethod.GET)
-    public void deleteLobby(@PathVariable String id){
-        repository.delete(id);
+    @RequestMapping(value = "/{name}/clear", method = RequestMethod.GET)
+    public void deleteLobby(@PathVariable String name) {
+        repository.deleteByName(name);
         messagingTemplate.convertAndSend("/topic/lobbies", repository.findAll());
     }
 }
