@@ -5,3 +5,4 @@ spring-boot, web socket, react js
 * run se.olapetersson.ReactiveApplication.class
 * add lobby: http://localhost:8080/lobbies/{lobby-name}
 * and see adding lobby: http://localhost:8080 
+* delete lobby: http://localhost:8080/lobbies/{lobby-name}/clear
