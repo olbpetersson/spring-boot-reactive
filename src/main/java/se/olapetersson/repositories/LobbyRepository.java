@@ -1,13 +1,9 @@
 package se.olapetersson.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import se.olapetersson.entities.Lobby;
 
-import java.util.List;
-
-public interface LobbyRepository extends MongoRepository<Lobby, String> {
-
+public interface LobbyRepository extends JpaRepository<Lobby, Long> {
     Lobby findByName(String name);
-    List<Lobby> findAll();
-
+    void deleteByName(String name);
 }

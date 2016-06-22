@@ -1,33 +1,35 @@
 var PlayField = React.createClass({
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {data: []};
     },
 
-    componentDidMount: function(){
+    componentDidMount: function () {
         this.connectToLobbies();
     },
 
-    connectToLobbies: function(){
+    connectToLobbies: function () {
         var stompClient = null;
         var component = this;
-        function setComponentState(data){
+
+        function setComponentState(data) {
             component.setState(data);
         }
+
         function connect() {
             var socket = new WebSocket('ws://localhost:8080/test');
             stompClient = Stomp.over(socket);
-            stompClient.connect({}, function(frame) {
+            stompClient.connect({}, function (frame) {
                 console.log('Connected: ' + frame);
                 initLobbies();
-                stompClient.subscribe('/topic/lobbies', function(data){
+                stompClient.subscribe('/topic/lobbies', function (data) {
                     console.log(data.body);
                     setComponentState({data: JSON.parse(data.body)});
                 });
             });
         }
 
-        function initLobbies(){
+        function initLobbies() {
             stompClient.send("/app/lobbies/init", {}, "init");
         }
 
@@ -37,14 +39,15 @@ var PlayField = React.createClass({
             }
             console.log("Disconnected");
         }
+
         connect();
     },
-    render: function(){
+    render: function () {
         var lobbies = [];
         var lobbyData = this.state.data;
         console.log(lobbyData.length);
-        for(var i =0; i < lobbyData.length; i++){
-            lobbies.push(<LobbyCard title={lobbyData[i].name} key={lobbyData[i].name} />);
+        for (var i = 0; i < lobbyData.length; i++) {
+            lobbies.push(<LobbyCard title={lobbyData[i].name} key={lobbyData[i].name}/>);
         }
         return (
             <div className="jumbotron container-fluid">
@@ -56,7 +59,7 @@ var PlayField = React.createClass({
 });
 
 var LobbyCard = React.createClass({
-    render: function(){
+    render: function () {
         var title = this.props.title;
         return (
             <div className="jumbotron">

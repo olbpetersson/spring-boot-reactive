@@ -1,23 +1,20 @@
 package se.olapetersson.entities;
 
-import org.springframework.data.annotation.Id;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
-public class Lobby {
-    private int players;
-    @Id
+import javax.persistence.Column;
+import javax.persistence.Entity;
+
+@Entity
+public class Lobby extends AbstractPersistable<Long> {
+    @Column(unique = true, nullable = false)
     private String name;
 
+    public Lobby() {
+    }
+
     public Lobby(String name) {
-        this.players = 1;
         this.name = name;
-    }
-
-    public int getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(int players) {
-        this.players = players;
     }
 
     public String getName() {
