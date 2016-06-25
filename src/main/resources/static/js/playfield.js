@@ -1,43 +1,35 @@
 var PlayField = React.createClass({
-
     getInitialState: function () {
         return {data: []};
     },
-
     componentDidMount: function () {
         this.connectToLobbies();
     },
-
     connectToLobbies: function () {
         var stompClient = null;
         var component = this;
 
-        function setComponentState(data) {
-            component.setState(data);
+        function connect() {
+            var socket = new WebSocket('ws://' + location.host + '/test');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, connectHandle, errorHandle);
         }
 
-        function connect() {
-            var socket = new WebSocket('ws://localhost:8080/test');
-            stompClient = Stomp.over(socket);
-            stompClient.connect({}, function (frame) {
-                console.log('Connected: ' + frame);
-                initLobbies();
-                stompClient.subscribe('/topic/lobbies', function (data) {
-                    console.log(data.body);
-                    setComponentState({data: JSON.parse(data.body)});
-                });
+        function connectHandle(frame) {
+            console.log('Connected: ' + frame);
+            stompClient.send("/app/lobbies/init", {}, "init");
+            stompClient.subscribe('/topic/lobbies', function (data) {
+                console.log(data.body);
+                component.setState({data: JSON.parse(data.body)});
             });
         }
 
-        function initLobbies() {
-            stompClient.send("/app/lobbies/init", {}, "init");
-        }
-
-        function disconnect() {
+        function errorHandle(message) {
             if (stompClient != null) {
                 stompClient.disconnect();
+                stompClient = null;
             }
-            console.log("Disconnected");
+            console.log("Disconnected: " + message);
         }
 
         connect();
